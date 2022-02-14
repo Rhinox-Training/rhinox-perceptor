@@ -1,0 +1,22 @@
+{
+  "name": "com.rhinox.open.perceptor",
+  "version": "0.1.0",
+  "unity": "2019.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rhinox-Training/rhinox-perceptor.git"
+  },
+  "author": "Rhinox",
+  "license": "Apache V.2",
+  "bugs": {
+    "url": "https://github.com/Rhinox-Training/rhinox-perceptor/issues"
+  },
+  "homepage": "https://github.com/Rhinox-Training/rhinox-perceptor#readme",
+  "samples": [
+    {
+      "displayName": "Demo",
+      "description": "Demonstration of initialization and logger usage",
+      "path": "Samples~/Demo"
+    }
+  ]
+}
