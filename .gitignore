@@ -22,6 +22,10 @@
 
 # Visual Studio cache directory
 .vs/
+.vscode/
+
+# Rider cache directory
+.idea/
 
 # Gradle cache directory
 .gradle/
@@ -58,4 +62,11 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
+
+# Package cache
+Packages/packages-lock.json
+
+# Symlinked Odin
+Packages/*odin-inspector/
+Packages/*.odininspector
 
