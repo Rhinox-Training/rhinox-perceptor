@@ -1,0 +1,17 @@
+{
+    "name": "com.rhinox.open.perceptor.editor",
+    "references": [
+        "GUID:d06f234cedf03a546807d093bc1d736b"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
