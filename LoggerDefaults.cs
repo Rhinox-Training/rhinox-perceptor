@@ -7,18 +7,11 @@ using UnityEngine;
 
 namespace Rhinox.Perceptor
 {
-    [Serializable]
-    public class LoggerSetting
-    {
-        public string TypeName;
-        public string FullTypeName;
-        public LogLevels Level;
-        public bool ThrowExceptionOnFatal = false;
-    }
-    
     public class LoggerDefaults : ScriptableObject
     {
-        public List<LoggerSetting> Settings = new List<LoggerSetting>();
+        public List<LoggerSettings> Settings = new List<LoggerSettings>();
+
+        private const LogLevels DEFAULT_LOG_LEVEL = LogLevels.Info;
         
         private static LoggerDefaults _instance;
         public static LoggerDefaults Instance
@@ -65,61 +58,70 @@ namespace Rhinox.Perceptor
                 AssetDatabase.Refresh();
             }
         }
+        
+        public static void TryPopulate()
+        {
+            var instance = Instance;
+            foreach (var type in PLog.FindLoggerTypes())
+            {
+                bool typeAlreadyConfigured = false;
+                foreach (var setting in instance.Settings)
+                {
+                    if (setting == null || setting.FullTypeName == null)
+                        continue;
+
+                    if (setting.FullTypeName.Equals(type.FullName))
+                    {
+                        typeAlreadyConfigured = true;
+                        break;
+                    }
+                }
+                
+                if (!typeAlreadyConfigured)
+                    instance.Add(type);
+            }
+        }
 #endif
 
-        public void Add<T>(LogLevels levels, bool throwExceptionOnFatal = false) where T : BaseLogger
+        public void Add<T>(LogLevels levels = DEFAULT_LOG_LEVEL, bool throwExceptionOnFatal = false) where T : ILogger
         {
             Add(typeof(T), levels, throwExceptionOnFatal);
         }
 
-        public void Add(Type t, LogLevels levels, bool throwExceptionOnFatal = false)
+        public void Add(Type loggerType, LogLevels levels = DEFAULT_LOG_LEVEL, bool throwExceptionOnFatal = false)
         {
-            if (!t.IsDefinedTypeOf<BaseLogger>())
+            if (!loggerType.IsDefinedTypeOf<ILogger>())
                 return;
-            
-            string fullTypeName = GetFullTypeName(t);
-            if (fullTypeName == null)
-                return;
+
+            string fullTypeName = loggerType.FullName;
             
             if (Settings == null)
-                Settings = new List<LoggerSetting>();
+                Settings = new List<LoggerSettings>();
 
             if (Settings.Any(x => x.FullTypeName.Equals(fullTypeName)))
                 return;
 
-            LoggerSetting setting = new LoggerSetting()
+            LoggerSettings settings = new LoggerSettings()
             {
                 FullTypeName = fullTypeName,
-                TypeName = t.Name,
+                TypeName = loggerType.Name,
+                Muted = false,
                 Level = levels,
                 ThrowExceptionOnFatal = throwExceptionOnFatal
             };
-            Settings.Add(setting);
+            Settings.Add(settings);
         }
 
-        private string GetFullTypeName<T>() where T : BaseLogger
+        public void ApplySettings(ILogger logger)
         {
-            return GetFullTypeName(typeof(T));
-        }
-
-        private string GetFullTypeName(Type t)
-        {
-            if (!t.IsDefinedTypeOf<BaseLogger>())
-                return null;
-            return t.FullName;
-        }
-
-        public void ApplySettings(BaseLogger logger)
-        {
-            Type t = logger.GetType();
-            string fullTypeName = GetFullTypeName(t);
-            if (fullTypeName == null)
+            if (logger == null)
                 return;
+            Type loggerType = logger.GetType();
             
             if (Settings == null)
-                Settings = new List<LoggerSetting>();
+                Settings = new List<LoggerSettings>();
 
-            var setting = Settings.FirstOrDefault(x => x.FullTypeName.Equals(fullTypeName));
+            var setting = Settings.FirstOrDefault(x => x.FullTypeName.Equals(loggerType.FullName));
             if (setting == null)
                 return;
 
@@ -132,8 +134,8 @@ namespace Rhinox.Perceptor
             if (Settings == null)
                 return false;
             
-            string fullTypeName = GetFullTypeName(t);
-            return Settings.Any(x => x.FullTypeName.Equals(fullTypeName));
+            return Settings.Any(x => x.FullTypeName.Equals(t.FullName));
         }
+
     }
 }
