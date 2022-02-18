@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Perceptor.Util
+namespace Rhinox.Perceptor
 {
     public class RotatingFileLogger
     {
