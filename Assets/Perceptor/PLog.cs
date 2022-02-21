@@ -82,13 +82,20 @@ namespace Rhinox.Perceptor
         {
             DontDestroyOnLoad(gameObject);
         }
-        
-        public ILogger GetLogger<T>() where T : ILogger
+
+        public static ILogger GetLogger<T>() where T : ILogger
         {
-            return GetLogger(typeof(T));
+            if (_instance == null)
+                return null;
+            return _instance.GetLoggerInternal<T>();
+        }
+        
+        private ILogger GetLoggerInternal<T>() where T : ILogger
+        {
+            return GetLoggerInternal(typeof(T));
         }
 
-        public ILogger GetLogger(Type t)
+        private ILogger GetLoggerInternal(Type t)
         {
             if (t.IsDefinedTypeOf<ILogger>())
                 return _loggerCache.ContainsKey(t) ? _loggerCache[t] : _defaultLogger;
@@ -110,7 +117,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Trace, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Trace, message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Trace, message, associatedObject);
         }
 
         public static void TraceDetailed(string message, [CallerMemberName] string caller = "",
@@ -134,7 +141,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Trace, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Trace, message, associatedObject: associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Trace, message, associatedObject: associatedObject);
         }
 
         private static string GetCallerMessage(string message, string caller, string callerPath)
@@ -157,7 +164,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Debug, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Debug, message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Debug, message, associatedObject);
         }
 
         public static void Info(string message, UnityEngine.Object associatedObject = null)
@@ -172,7 +179,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Info, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Info, message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Info, message, associatedObject);
         }
 
         public static void Warn(string message, UnityEngine.Object associatedObject = null)
@@ -188,7 +195,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Warn, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Warn, message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Warn, message, associatedObject);
         }
 
         public static void Error(string message, UnityEngine.Object associatedObject = null)
@@ -203,7 +210,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Error, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Error, message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Error, message, associatedObject);
         }
 
         public static void Fatal(string message, UnityEngine.Object associatedObject = null)
@@ -218,7 +225,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Fatal, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Fatal, message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Fatal, message, associatedObject);
         }
 
         public static void Fatal(Exception exception, UnityEngine.Object associatedObject = null)
@@ -233,7 +240,7 @@ namespace Rhinox.Perceptor
                 BackupLog(LogLevels.Fatal, exception.Message);
                 return;
             }
-            _instance.GetLogger<T>().Log(LogLevels.Fatal, exception.Message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(LogLevels.Fatal, exception.Message, associatedObject);
         }
 
         public static void Log(LogLevels level, string message, UnityEngine.Object associatedObject = null)
@@ -253,7 +260,7 @@ namespace Rhinox.Perceptor
                 BackupLog(level, message);
                 return;
             }
-            _instance.GetLogger<T>().Log(level, message, associatedObject);
+            _instance.GetLoggerInternal<T>().Log(level, message, associatedObject);
         }
         
         private static void BackupLog(LogLevels level, string message)

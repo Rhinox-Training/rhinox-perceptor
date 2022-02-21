@@ -30,20 +30,22 @@ namespace Rhinox.Perceptor
             SetupFile();
         }
 
-        public static FileLogTarget Create<T>(string customFilePath = null) where T : ILogger
+        public static FileLogTarget CreateByPath(string customFilePath)
         {
             if (string.IsNullOrWhiteSpace(customFilePath))
-            {
-                string sanitizedTypeName = SanitizeTypeName(typeof(T).Name);
-                string fileName = $"{sanitizedTypeName.ToLowerInvariant()}.log";
-
-                string filePath = Path.Combine($"{DEFAULT_LOGS_FOLDER}/", fileName);
-                return new FileLogTarget(filePath);
-            }
-
+                throw new ArgumentNullException(nameof(customFilePath));
             return new FileLogTarget(customFilePath);
         }
-        
+
+        public static FileLogTarget CreateByName(string name)
+        {
+            string sanitizedTypeName = SanitizeTypeName(name);
+            string fileName = $"{sanitizedTypeName.ToLowerInvariant()}.log";
+
+            string filePath = Path.Combine($"{DEFAULT_LOGS_FOLDER}/", fileName);
+            return new FileLogTarget(filePath);
+        }
+
         protected override void OnLog(LogLevels level, string message, Object associatedObject = null)
         {
             if (_rotatingFileLogger == null)
