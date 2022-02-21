@@ -124,9 +124,8 @@ namespace Rhinox.Perceptor
             var setting = Settings.FirstOrDefault(x => x.FullTypeName.Equals(loggerType.FullName));
             if (setting == null)
                 return;
-
-            logger.LogLevel = setting.Level;
-            logger.ShouldThrowErrors = setting.ThrowExceptionOnFatal;
+            
+            logger.ApplySettings(setting);
         }
 
         public bool HasSetting(Type t)

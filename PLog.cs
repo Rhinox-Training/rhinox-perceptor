@@ -83,12 +83,12 @@ namespace Rhinox.Perceptor
             DontDestroyOnLoad(gameObject);
         }
         
-        private ILogger GetLogger<T>() where T : ILogger
+        public ILogger GetLogger<T>() where T : ILogger
         {
             return GetLogger(typeof(T));
         }
 
-        private ILogger GetLogger(Type t)
+        public ILogger GetLogger(Type t)
         {
             if (t.IsDefinedTypeOf<ILogger>())
                 return _loggerCache.ContainsKey(t) ? _loggerCache[t] : _defaultLogger;
@@ -103,7 +103,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Trace, message, associatedObject: associatedObject);
         }
         
-        public static void Trace<T>(string message, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Trace<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
             {
@@ -126,7 +126,7 @@ namespace Rhinox.Perceptor
         }
         
         public static void TraceDetailed<T>(string message, UnityEngine.Object associatedObject = null, [CallerMemberName] string caller = "",
-            [CallerFilePath] string callerPath = "") where T : CustomLogger
+            [CallerFilePath] string callerPath = "") where T : ILogger
         {
             message = GetCallerMessage(message, caller, callerPath);
             if (_instance == null)
@@ -150,7 +150,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Debug, message, associatedObject: associatedObject);
         }
         
-        public static void Debug<T>(string message, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Debug<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
             {
@@ -165,7 +165,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Info, message, associatedObject: associatedObject);
         }
         
-        public static void Info<T>(string message, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Info<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
             {
@@ -180,7 +180,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Warn, message, associatedObject: associatedObject);
         }
         
-        public static void Warn<T>(string message, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Warn<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             
             if (_instance == null)
@@ -196,7 +196,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Error, message, associatedObject: associatedObject);
         }
         
-        public static void Error<T>(string message, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Error<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
             {
@@ -211,7 +211,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Fatal, message, associatedObject: associatedObject);
         }
         
-        public static void Fatal<T>(string message, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Fatal<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
             {
@@ -226,7 +226,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Fatal, exception.Message, associatedObject);
         }
         
-        public static void Fatal<T>(Exception exception, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Fatal<T>(Exception exception, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
             {
@@ -246,7 +246,7 @@ namespace Rhinox.Perceptor
             _instance._defaultLogger.Log(level, message, associatedObject);
         }
         
-        public static void Log<T>(LogLevels level, string message, UnityEngine.Object associatedObject = null) where T : CustomLogger
+        public static void Log<T>(LogLevels level, string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
             {

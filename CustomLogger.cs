@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Perceptor.Util;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Rhinox.Perceptor
@@ -36,6 +33,19 @@ namespace Rhinox.Perceptor
                     continue;
                 
                 target.Log(level, message, associatedObject);
+            }
+        }
+
+        public void ApplySettings(LoggerSettings settings)
+        {
+            if (_logTargets == null)
+                return;
+
+            foreach (var target in _logTargets)
+            {
+                if (target == null)
+                    continue;
+                target.ApplySettings(settings);
             }
         }
 
