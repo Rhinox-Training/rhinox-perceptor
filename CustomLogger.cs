@@ -22,6 +22,12 @@ namespace Rhinox.Perceptor
             _logTargets.Add(new UnityLogTarget());
         }
 
+        internal void AppendTarget(ILogTarget logger)
+        {
+            if (logger != null && !_logTargets.Contains(logger))
+                _logTargets.Add(logger);
+        }
+
         public void Log(LogLevels level, string message, UnityEngine.Object associatedObject = null)
         {
             if (_logTargets == null)
