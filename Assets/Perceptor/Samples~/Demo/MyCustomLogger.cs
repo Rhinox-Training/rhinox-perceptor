@@ -2,8 +2,16 @@
 
 namespace Samples
 {
-    public class MyCustomLogger : BaseLogger
+    public class MyCustomLogger : CustomLogger
     {
-        
+        protected override ILogTarget[] GetTargets()
+        {
+			return new ILogTarget[] 
+			{
+				FileLogTarget.CreateByName("custom"),
+				FileLogTarget.CreateByPath("../Logs/custom.log"),
+				new UnityLogTarget()
+			};
+        }
     }
 }
