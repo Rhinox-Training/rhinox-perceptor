@@ -37,11 +37,14 @@ namespace Rhinox.Perceptor
             
             // Load logger settings
             LoggerDefaults ld = LoggerDefaults.Instance;
-            foreach (var key in _instance._loggerCache.Keys)
+            foreach (var loggerType in _instance._loggerCache.Keys)
             {
-                var logger = _instance._loggerCache[key];
-                if (ld.HasSetting(key))
-                    ld.ApplySettings(logger);
+                var logger = _instance._loggerCache[loggerType];
+                if (ld.HasSetting(loggerType))
+                {
+                    var setting = ld.FindSetting(loggerType);
+                    logger.ApplySettings(setting);
+                }
             }
 
             // Load LogTargetCache
@@ -94,12 +97,52 @@ namespace Rhinox.Perceptor
                 return null;
             return _instance.GetLoggerInternal<T>();
         }
+
+        public static ILogger GetLogger(Type loggerType)
+        {
+            if (_instance == null)
+                return null;
+            return _instance.GetLoggerInternal(loggerType);
+        }
         
         public static ILogger GetDefaultLogger()
         {
             if (_instance == null)
                 return null;
             return _instance._defaultLogger;
+        }
+        
+        public static bool SetForDefault(LogLevels level, bool throwOnException = false)
+        {
+            return Set<DefaultLogger>(level, throwOnException);
+        }
+
+        public static bool Set<T>(LogLevels level, bool throwOnException = false) where T : ILogger
+        {
+            var logger = GetLogger<T>();
+            if (logger == null)
+                return false;
+
+            var settings = LoggerDefaults.Instance.FindSetting(typeof(T));
+            if (settings == null)
+                settings = LoggerSettings.CreateDefault<T>();
+            
+            logger.ApplySettings(settings);
+            return true;
+        }
+        
+        public static bool Set(Type loggerType, LogLevels level, bool throwOnException = false)
+        {
+            var logger = GetLogger(loggerType);
+            if (logger == null)
+                return false;
+
+            var settings = LoggerDefaults.Instance.FindSetting(loggerType);
+            if (settings == null)
+                settings = LoggerSettings.CreateDefault(loggerType);
+            
+            logger.ApplySettings(settings);
+            return true;
         }
         
         private ILogger GetLoggerInternal<T>() where T : ILogger
@@ -109,7 +152,7 @@ namespace Rhinox.Perceptor
 
         private ILogger GetLoggerInternal(Type t)
         {
-            if (t.IsDefinedTypeOf<ILogger>())
+            if (t != null && t.IsDefinedTypeOf<ILogger>())
                 return _loggerCache.ContainsKey(t) ? _loggerCache[t] : _defaultLogger;
             return _defaultLogger;
         }

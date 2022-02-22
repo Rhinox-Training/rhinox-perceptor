@@ -58,6 +58,9 @@ namespace Rhinox.Perceptor
 
         public void ApplySettings(LoggerSettings settings)
         {
+            if (settings == null || !settings.CanApplyTo(this))
+                return;
+            
             if (_logTargets == null)
                 return;
 

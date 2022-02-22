@@ -90,7 +90,7 @@ namespace Rhinox.Perceptor
 
         public void Add(Type loggerType, LogLevels levels = DEFAULT_LOG_LEVEL, bool throwExceptionOnFatal = false)
         {
-            if (!loggerType.IsDefinedTypeOf<ILogger>())
+            if (loggerType == null || !loggerType.IsDefinedTypeOf<ILogger>())
                 return;
 
             string fullTypeName = loggerType.FullName;
@@ -101,39 +101,27 @@ namespace Rhinox.Perceptor
             if (Settings.Any(x => x.FullTypeName.Equals(fullTypeName)))
                 return;
 
-            LoggerSettings settings = new LoggerSettings()
-            {
-                FullTypeName = fullTypeName,
-                TypeName = loggerType.Name,
-                Muted = false,
-                Level = levels,
-                ThrowExceptionOnFatal = throwExceptionOnFatal
-            };
+            LoggerSettings settings = LoggerSettings.CreateDefault(loggerType);
+            settings.Level = levels;
+            settings.ThrowExceptionOnFatal = throwExceptionOnFatal;
             Settings.Add(settings);
         }
-
-        public void ApplySettings(ILogger logger)
-        {
-            if (logger == null)
-                return;
-            Type loggerType = logger.GetType();
-            
-            if (Settings == null)
-                Settings = new List<LoggerSettings>();
-
-            var setting = Settings.FirstOrDefault(x => x.FullTypeName.Equals(loggerType.FullName));
-            if (setting == null)
-                return;
-            
-            logger.ApplySettings(setting);
-        }
-
+        
         public bool HasSetting(Type t)
         {
             if (Settings == null)
                 return false;
             
             return Settings.Any(x => x.FullTypeName.Equals(t.FullName));
+        }
+
+        public LoggerSettings FindSetting(Type t)
+        {
+            if (Settings == null)
+                return null;
+            
+            var setting = Settings.FirstOrDefault(x => x.FullTypeName.Equals(t.FullName));
+            return setting?.Clone();
         }
 
     }
