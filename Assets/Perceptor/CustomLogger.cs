@@ -17,7 +17,7 @@ namespace Rhinox.Perceptor
             _logTargets = new List<ILogTarget>();
         }
 
-        public void SetupTargets()
+        internal void SetupTargets()
         {
             foreach (var target in GetTargets())
             {
