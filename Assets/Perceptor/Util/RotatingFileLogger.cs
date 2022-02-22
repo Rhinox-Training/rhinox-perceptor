@@ -30,11 +30,13 @@ namespace Rhinox.Perceptor
             int utfLength = Encoding.UTF8.GetByteCount(line);
             if (fi.Exists && fi.Length + utfLength > DEFAULT_MAX_FILE_SIZE)
                 SwapFile();
+            TryCreateDirectories(FilePath);
             File.AppendAllText(FilePath, line + "\n");
         }
 
         private void SwapFile()
         {
+            TryCreateDirectories(BackFilePath);
             File.Copy(FilePath, BackFilePath, true);
             using(FileStream fs = File.Open(FilePath ,FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
@@ -42,6 +44,21 @@ namespace Rhinox.Perceptor
                 {
                     fs.SetLength(0);
                 }
+            }
+        }
+
+        private static bool TryCreateDirectories(string path)
+        {
+            var fi = new FileInfo(path);
+            try
+            {
+                if (fi.Directory != null && !fi.Directory.Exists)
+                    Directory.CreateDirectory(fi.Directory.FullName);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
         }
     }

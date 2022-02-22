@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace Rhinox.Perceptor
 {
-    [CreateAssetMenu]
     public class LoggerDefaults : ScriptableObject
     {
         public List<LoggerSettings> Settings = new List<LoggerSettings>();
