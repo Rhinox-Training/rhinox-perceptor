@@ -95,6 +95,13 @@ namespace Rhinox.Perceptor
             return _instance.GetLoggerInternal<T>();
         }
         
+        public static ILogger GetDefaultLogger()
+        {
+            if (_instance == null)
+                return null;
+            return _instance._defaultLogger;
+        }
+        
         private ILogger GetLoggerInternal<T>() where T : ILogger
         {
             return GetLoggerInternal(typeof(T));
