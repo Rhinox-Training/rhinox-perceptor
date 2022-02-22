@@ -9,9 +9,6 @@ using System.Collections.Generic;
 
 namespace Rhinox.Perceptor
 {
-#if RHINOX_MAGNUS
-    [ExecutionOrder(-20000), InitializationHandler]
-#endif
     public class PLog : MonoBehaviour
     {
         private static PLog _instance = null;
@@ -24,9 +21,6 @@ namespace Rhinox.Perceptor
 
         private class DefaultLogger : CustomLogger { }
 
-#if RHINOX_MAGNUS
-        [BetterRuntimeInitialize(-20000)]
-#endif
         public static void CreateIfNotExists()
         {
             if (_instance != null)
@@ -81,6 +75,10 @@ namespace Rhinox.Perceptor
 
                 if (logger is DefaultLogger)
                     _defaultLogger = logger;
+
+                if (logger is CustomLogger customLogger)
+                    customLogger.SetupTargets();
+                
                 _loggerCache.Add(type, logger);
             }
         }
