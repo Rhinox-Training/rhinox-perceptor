@@ -18,6 +18,8 @@ namespace Rhinox.Perceptor
 
         private Dictionary<Type, ILogger> _loggerCache;
         private ILogger _defaultLogger;
+        public bool Loaded { get; private set; }
+        
         private static bool _loggedWithoutInitialization;
 
         private class DefaultLogger : CustomLogger { }
@@ -47,6 +49,11 @@ namespace Rhinox.Perceptor
                 if (ld.HasSetting(key))
                     ld.ApplySettings(logger);
             }
+
+            // Load LogTargetCache
+            _instance.TryLoadLogTargetCache();
+            
+            _instance.Loaded = true;
         }
 
         public static ICollection<Type> FindLoggerTypes()
@@ -101,7 +108,60 @@ namespace Rhinox.Perceptor
                 return _loggerCache.ContainsKey(t) ? _loggerCache[t] : _defaultLogger;
             return _defaultLogger;
         }
-        
+
+        private static Dictionary<Type, List<ILogTarget>> _targetInitializationCache;
+        public static void AppendLogTarget<T>(ILogTarget target) where T : CustomLogger
+        {
+            if (_targetInitializationCache == null)
+                _targetInitializationCache = new Dictionary<Type, List<ILogTarget>>();
+
+            Type t = typeof(T);
+
+            List<ILogTarget> list = null;
+            if (!_targetInitializationCache.ContainsKey(t))
+            {
+                list = new List<ILogTarget>();
+                _targetInitializationCache.Add(t, list);
+            }
+            else
+            {
+                list = _targetInitializationCache[t];
+            }
+
+            if (!list.Contains(target))
+                list.Add(target);
+
+            _targetInitializationCache[t] = list;
+
+            if (_instance != null && _instance.Loaded)
+                _instance.TryLoadLogTargetCache();
+        }
+
+        private void TryLoadLogTargetCache()
+        {
+            if (_targetInitializationCache == null)
+                return;
+
+            foreach (var type in _targetInitializationCache.Keys)
+            {
+                if (type == null)
+                    continue;
+
+                var logger = GetLoggerInternal(type);
+                if (!(logger is CustomLogger customLogger))
+                    continue;
+                
+                var cacheList = _targetInitializationCache[type];
+                foreach (var entry in cacheList)
+                {
+                    if (entry == null)
+                        continue;
+                    
+                    customLogger.AppendTarget(entry);
+                }
+            }
+        }
+
         // =============================================================================================================
         // API
 
