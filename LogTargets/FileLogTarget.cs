@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -12,21 +13,11 @@ namespace Rhinox.Perceptor
         
         private const string DEFAULT_LOGS_FOLDER = "Logs";
 
-        private FileLogTarget(string filePath)
-        {
-            if (Path.IsPathRooted(filePath))
-            {
-                FilePath = filePath;
-            }
-            else
-            {
-#if UNITY_EDITOR
-                FilePath = Path.GetFullPath(Path.Combine(Application.dataPath, "../", filePath));
-#else
-            FilePath = Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, filePath));
-#endif
-            }
+        private static Dictionary<string, FileLogTarget> _fileLogTargets;
 
+        private FileLogTarget(string rootedFilePath)
+        {
+            FilePath = rootedFilePath;
             SetupFile();
         }
 
@@ -34,7 +25,7 @@ namespace Rhinox.Perceptor
         {
             if (string.IsNullOrWhiteSpace(customFilePath))
                 throw new ArgumentNullException(nameof(customFilePath));
-            return new FileLogTarget(customFilePath);
+            return FindOrCreateTarget(customFilePath);
         }
 
         public static FileLogTarget CreateByName(string name)
@@ -43,7 +34,36 @@ namespace Rhinox.Perceptor
             string fileName = $"{sanitizedTypeName.ToLowerInvariant()}.log";
 
             string filePath = Path.Combine($"{DEFAULT_LOGS_FOLDER}/", fileName);
-            return new FileLogTarget(filePath);
+            return FindOrCreateTarget(filePath);
+        }
+
+        private static FileLogTarget FindOrCreateTarget(string filePath)
+        {
+            if (_fileLogTargets == null)
+                _fileLogTargets = new Dictionary<string, FileLogTarget>();
+
+            if (_fileLogTargets.ContainsKey(filePath))
+                return _fileLogTargets[filePath];
+
+            var target = new FileLogTarget(filePath);
+            _fileLogTargets.Add(filePath, target);
+            return target;
+        }
+
+        private static string GetAbsolutePath(string filePath)
+        {
+            if (Path.IsPathRooted(filePath))
+            {
+                return filePath;
+            }
+            else
+            {
+#if UNITY_EDITOR
+                return Path.GetFullPath(Path.Combine(Application.dataPath, "../", filePath));
+#else
+                return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, filePath));
+#endif
+            }
         }
 
         protected override void OnLog(LogLevels level, string message, Object associatedObject = null)
