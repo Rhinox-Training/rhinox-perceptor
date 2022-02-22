@@ -127,6 +127,9 @@ namespace Rhinox.Perceptor
             if (settings == null)
                 settings = LoggerSettings.CreateDefault<T>();
             
+            settings.Level = level;
+            settings.ThrowExceptionOnFatal = throwOnException;
+            
             logger.ApplySettings(settings);
             return true;
         }
@@ -140,6 +143,9 @@ namespace Rhinox.Perceptor
             var settings = LoggerDefaults.Instance.FindSetting(loggerType);
             if (settings == null)
                 settings = LoggerSettings.CreateDefault(loggerType);
+
+            settings.Level = level;
+            settings.ThrowExceptionOnFatal = throwOnException;
             
             logger.ApplySettings(settings);
             return true;
