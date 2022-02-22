@@ -112,6 +112,9 @@ namespace Rhinox.Perceptor
         private static Dictionary<Type, List<ILogTarget>> _targetInitializationCache;
         public static void AppendLogTarget<T>(ILogTarget target) where T : CustomLogger
         {
+            if (target == null)
+                return;
+            
             if (_targetInitializationCache == null)
                 _targetInitializationCache = new Dictionary<Type, List<ILogTarget>>();
 
@@ -136,6 +139,8 @@ namespace Rhinox.Perceptor
             if (_instance != null && _instance.Loaded)
                 _instance.TryLoadLogTargetCache();
         }
+
+        public static void AppendLogTargetToDefault(ILogTarget target) => AppendLogTarget<DefaultLogger>(target);
 
         private void TryLoadLogTargetCache()
         {

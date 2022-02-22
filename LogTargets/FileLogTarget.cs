@@ -42,6 +42,8 @@ namespace Rhinox.Perceptor
             if (_fileLogTargets == null)
                 _fileLogTargets = new Dictionary<string, FileLogTarget>();
 
+            filePath = GetAbsolutePath(filePath);
+
             if (_fileLogTargets.ContainsKey(filePath))
                 return _fileLogTargets[filePath];
 

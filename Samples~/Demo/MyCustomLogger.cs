@@ -4,11 +4,14 @@ namespace Samples
 {
     public class MyCustomLogger : CustomLogger
     {
-        public override void SetupTargets()
+        protected override ILogTarget[] GetTargets()
         {
-            _logTargets.Add(FileLogTarget.CreateByName("custom"));
-            _logTargets.Add(FileLogTarget.CreateByPath("../Logs/custom.log"));
-            _logTargets.Add(new UnityLogTarget());
+			return new ILogTarget[] 
+			{
+				FileLogTarget.CreateByName("custom"),
+				FileLogTarget.CreateByPath("../Logs/custom.log"),
+				new UnityLogTarget()
+			};
         }
     }
 }

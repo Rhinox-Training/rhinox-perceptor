@@ -17,15 +17,29 @@ namespace Rhinox.Perceptor
             _logTargets = new List<ILogTarget>();
         }
 
-        public virtual void SetupTargets()
+        public void SetupTargets()
         {
-            _logTargets.Add(new UnityLogTarget());
+            foreach (var target in GetTargets())
+            {
+                if (target == null)
+                    continue;
+                
+                _logTargets.Add(target);
+            }
         }
 
-        internal void AppendTarget(ILogTarget logger)
+        protected virtual ILogTarget[] GetTargets()
         {
-            if (logger != null && !_logTargets.Contains(logger))
-                _logTargets.Add(logger);
+            return new[]
+            {
+                new UnityLogTarget()
+            };
+        }
+
+        internal void AppendTarget(ILogTarget target)
+        {
+            if (target != null && !_logTargets.Contains(target))
+                _logTargets.Add(target);
         }
 
         public void Log(LogLevels level, string message, UnityEngine.Object associatedObject = null)

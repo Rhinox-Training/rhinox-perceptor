@@ -11,6 +11,9 @@ namespace Samples
         public static void Start()
         {
             Rhinox.Perceptor.PLog.CreateIfNotExists();
+			var sharedFileTarget = FileLogTarget.CreateByName("game");
+			Rhinox.Perceptor.PLog.AppendLogTargetToDefault(sharedFileTarget);
+			Rhinox.Perceptor.PLog.AppendLogTarget<MyCustomLogger>(sharedFileTarget);
         }
 
         [MenuItem("Test/TestLogin")]
