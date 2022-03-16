@@ -9,8 +9,7 @@ namespace Rhinox.Perceptor
         public string FilePath { get; }
         private string BackFilePath { get; }
         public int MaxFileSize { get; }
-    
-    
+        
         public const int DEFAULT_MAX_FILE_SIZE = 10 * 1024 * 1024;
     
         public RotatingFileLogger(string filePath, int maxFileSize = DEFAULT_MAX_FILE_SIZE)
@@ -56,7 +55,7 @@ namespace Rhinox.Perceptor
                     Directory.CreateDirectory(fi.Directory.FullName);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
