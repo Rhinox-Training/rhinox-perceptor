@@ -10,6 +10,10 @@ namespace Rhinox.Perceptor
         public bool ShouldThrowErrors = false;
         private readonly List<ILogTarget> _logTargets;
 
+        public delegate void LogHandler(LogLevels level, string message, UnityEngine.Object associatedObject = null);
+        public event LogHandler Logged; 
+        public static event LogHandler GlobalLogged; 
+
         protected CustomLogger(LogLevels levels = LogLevels.Debug, bool shouldThrowErrors = false)
         {
             LogLevel = levels;
@@ -54,6 +58,14 @@ namespace Rhinox.Perceptor
                 
                 target.Log(level, message, associatedObject);
             }
+            
+            TriggerLogged(level, message, associatedObject);
+        }
+
+        protected virtual void TriggerLogged(LogLevels level, string message, UnityEngine.Object associatedObject = null)
+        {
+            Logged?.Invoke(level, message, associatedObject);
+            GlobalLogged?.Invoke(level, message, associatedObject);
         }
 
         public void ApplySettings(LoggerSettings settings)
