@@ -54,9 +54,12 @@ namespace Rhinox.Perceptor
             
             _instance.Loaded = true;
 
-            if (flushPrecacheOnInit)
+            if (_cacheLogger != null)
             {
-                _cacheLogger.FlushCache(_instance._loggerCache.Values);
+                if (flushPrecacheOnInit)
+                    _cacheLogger.FlushCache(_instance._loggerCache.Values);
+                else
+                    _cacheLogger.Clear();
             }
         }
 
@@ -396,16 +399,14 @@ namespace Rhinox.Perceptor
             if (!_loggedWithoutInitialization)
             {
                 UnityEngine.Debug.LogWarning(
-                    $"[WARNING] {nameof(PLog)} hasn't been initialized yet, some of the following lines might not be included in the appropriate logs.");
+                    $"[WARNING] {nameof(PLog)} hasn't been initialized yet, entries will be cached and can be flushed during initialization.");
                 _loggedWithoutInitialization = true;
             }
-
+            
             if (_cacheLogger == null)
                 _cacheLogger = new LogPrecache();
 
-            if (!_cacheLogger.CacheEntry(loggerType, level, message, associatedObject))
-                UnityEngine.Debug.LogWarning(
-                    $"[WARNING] {nameof(PLog)} hasn't been initialized yet, caching entries has been enabled. However, the cache for logger of type '{loggerType?.Name}' has overflowed.");
+            _cacheLogger.CacheEntry(loggerType, level, message, associatedObject);
             
             switch (level)
             {
