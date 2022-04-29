@@ -61,8 +61,8 @@ namespace Rhinox.Perceptor
             else
             {
 #if UNITY_EDITOR
-                //return Path.GetFullPath(Path.Combine(Application.dataPath, "../", filePath));
-//#else
+                return Path.GetFullPath(Path.Combine(Application.dataPath, "../", filePath));
+#else
                 if (Application.platform == RuntimePlatform.OSXPlayer)
                     return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, "/../../../", filePath));
                 else if (Application.platform == RuntimePlatform.WindowsPlayer)
