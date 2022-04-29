@@ -1,0 +1,72 @@
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Rhinox.Perceptor
+{
+    public class LogPrecache
+    {
+        private class LogEntryCache
+        {
+            public LogLevels Levels;
+            public string Message;
+            public UnityEngine.Object AssociatedObject;
+        }
+
+        private Dictionary<Type, List<LogEntryCache>> _cache;
+        private readonly int _entryLimitPerType;
+
+        public const int ENTRY_LIMIT = 1000;
+
+        public LogPrecache(int entryLimitPerType = ENTRY_LIMIT)
+        {
+            _entryLimitPerType = Math.Max(0, entryLimitPerType);
+            _cache = new Dictionary<Type, List<LogEntryCache>>();
+        }
+
+        public bool CacheEntry<T>(LogLevels levels, string message, GameObject associatedObject = null)
+            where T : ILogger
+        {
+            return CacheEntry(typeof(T), levels, message, associatedObject);
+        }
+
+        public bool CacheEntry(Type loggerType, LogLevels levels, string message, UnityEngine.Object associatedObject = null)
+        {
+            if (!_cache.ContainsKey(loggerType))
+                _cache.Add(loggerType, new List<LogEntryCache>());
+            var list = _cache[loggerType];
+            if (list.Count >= _entryLimitPerType)
+                return false;
+            
+            list.Add(new LogEntryCache()
+            {
+                Levels = levels,
+                Message = message,
+                AssociatedObject = associatedObject
+            });
+            _cache[loggerType] = list;
+            return true;
+        }
+
+
+        public void FlushCache(IReadOnlyCollection<ILogger> loggers)
+        {
+            if (_cache == null || _cache.Count == 0)
+                return;
+            
+            foreach (var logger in loggers)
+            {
+                if (logger == null)
+                    continue;
+                var loggerType = logger.GetType();
+                if (_cache.ContainsKey(loggerType))
+                {
+                    foreach (var entry in _cache[loggerType])
+                        logger.Log(entry.Levels, entry.Message, entry.AssociatedObject);
+                    _cache[loggerType].Clear();
+                }
+            }
+            _cache.Clear();
+        }
+    }
+}
