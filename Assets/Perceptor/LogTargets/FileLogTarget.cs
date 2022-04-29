@@ -61,11 +61,51 @@ namespace Rhinox.Perceptor
             else
             {
 #if UNITY_EDITOR
-                return Path.GetFullPath(Path.Combine(Application.dataPath, "../", filePath));
-#else
+                //return Path.GetFullPath(Path.Combine(Application.dataPath, "../", filePath));
+//#else
+                if (Application.platform == RuntimePlatform.OSXPlayer)
+                    return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, "/../../../", filePath));
+                else if (Application.platform == RuntimePlatform.WindowsPlayer)
+                    return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, "/../../", filePath));
+                else if (Application.platform == RuntimePlatform.Android)
+                    return Path.GetFullPath(Path.Combine(GetPersistentDataPath(), filePath));
                 return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, filePath));
 #endif
             }
+        }
+
+        private static string GetPersistentDataPath()
+        {
+            string path = "";
+#if UNITY_ANDROID && !UNITY_EDITOR
+             try 
+             {
+                IntPtr obj_context = AndroidJNI.FindClass("android/content/ContextWrapper");
+                IntPtr method_getFilesDir = AndroidJNIHelper.GetMethodID(obj_context, "getFilesDir", "()Ljava/io/File;");
+     
+                using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) 
+                {
+                    using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity")) 
+                    {
+                        IntPtr file = AndroidJNI.CallObjectMethod(obj_Activity.GetRawObject(), method_getFilesDir, new jvalue[0]);
+                        IntPtr obj_file = AndroidJNI.FindClass("java/io/File");
+                        IntPtr method_getAbsolutePath = AndroidJNIHelper.GetMethodID(obj_file, "getAbsolutePath", "()Ljava/lang/String;");   
+                                     
+                        path = AndroidJNI.CallStringMethod(file, method_getAbsolutePath, new jvalue[0]);                    
+     
+                        if(path == null)
+                            return Application.persistentDataPath;
+                    }
+                }
+            }
+            catch(Exception /*e*/) 
+            {
+                //Debug.Log(e.ToString());
+            }
+#else
+            path = Application.persistentDataPath;
+#endif
+            return path;
         }
 
         protected override void OnLog(LogLevels level, string message, Object associatedObject = null)

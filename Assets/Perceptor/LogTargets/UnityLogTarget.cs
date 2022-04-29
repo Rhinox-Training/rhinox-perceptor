@@ -4,8 +4,13 @@ namespace Rhinox.Perceptor
 {
     public class UnityLogTarget : BaseLogTarget
     {
+        internal static bool Silence = false;
+        
         protected override void OnLog(LogLevels level, string message, UnityEngine.Object associatedObject = null)
         {
+            if (Silence)
+                return;
+            
             // Also log to Unity
             switch (level)
             {
