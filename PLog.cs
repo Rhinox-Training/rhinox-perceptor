@@ -6,6 +6,7 @@ using UnityEditor;
 #endif
 using System;
 using System.Collections.Generic;
+using Object = UnityEngine.Object;
 
 namespace Rhinox.Perceptor
 {
@@ -19,9 +20,10 @@ namespace Rhinox.Perceptor
         
         private static bool _loggedWithoutInitialization;
 
+
         private class DefaultLogger : CustomLogger { }
 
-        public static void CreateIfNotExists()
+        public static void CreateIfNotExists(bool flushPrecacheOnInit = true)
         {
             if (_instance != null)
                 return;
@@ -51,6 +53,11 @@ namespace Rhinox.Perceptor
             _instance.TryLoadLogTargetCache();
             
             _instance.Loaded = true;
+
+            if (flushPrecacheOnInit)
+            {
+                _cacheLogger.FlushCache(_instance._loggerCache.Values);
+            }
         }
 
         public static ICollection<Type> FindLoggerTypes()
@@ -164,6 +171,8 @@ namespace Rhinox.Perceptor
         }
 
         private static Dictionary<Type, List<ILogTarget>> _targetInitializationCache;
+        private static LogPrecache _cacheLogger;
+
         public static void AppendLogTarget<T>(ILogTarget target) where T : CustomLogger
         {
             if (target == null)
@@ -233,7 +242,7 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(LogLevels.Trace, message);
+                BackupLog(typeof(T), LogLevels.Trace, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Trace, message, associatedObject);
@@ -245,7 +254,7 @@ namespace Rhinox.Perceptor
             message = GetCallerMessage(message, caller, callerPath);
             if (_instance == null)
             {
-                BackupLog(LogLevels.Trace, message);
+                BackupLog(typeof(DefaultLogger), LogLevels.Trace, message, associatedObject);
                 return;
             }
             Log(LogLevels.Trace, message, associatedObject: associatedObject);
@@ -257,7 +266,7 @@ namespace Rhinox.Perceptor
             message = GetCallerMessage(message, caller, callerPath);
             if (_instance == null)
             {
-                BackupLog(LogLevels.Trace, message);
+                BackupLog(typeof(T), LogLevels.Trace, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Trace, message, associatedObject: associatedObject);
@@ -280,7 +289,7 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(LogLevels.Debug, message);
+                BackupLog(typeof(T), LogLevels.Debug, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Debug, message, associatedObject);
@@ -295,7 +304,7 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(LogLevels.Info, message);
+                BackupLog(typeof(T), LogLevels.Info, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Info, message, associatedObject);
@@ -311,7 +320,7 @@ namespace Rhinox.Perceptor
             
             if (_instance == null)
             {
-                BackupLog(LogLevels.Warn, message);
+                BackupLog(typeof(T), LogLevels.Warn, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Warn, message, associatedObject);
@@ -326,7 +335,7 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(LogLevels.Error, message);
+                BackupLog(typeof(T), LogLevels.Error, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Error, message, associatedObject);
@@ -341,7 +350,7 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(LogLevels.Fatal, message);
+                BackupLog(typeof(T), LogLevels.Fatal, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Fatal, message, associatedObject);
@@ -356,7 +365,7 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(LogLevels.Fatal, exception.Message);
+                BackupLog(typeof(T), LogLevels.Fatal, exception.Message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(LogLevels.Fatal, exception.Message, associatedObject);
@@ -366,7 +375,7 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(level, message);
+                BackupLog(typeof(DefaultLogger), level, message, associatedObject);
                 return;
             }
             _instance._defaultLogger.Log(level, message, associatedObject);
@@ -376,13 +385,13 @@ namespace Rhinox.Perceptor
         {
             if (_instance == null)
             {
-                BackupLog(level, message);
+                BackupLog(typeof(T), level, message, associatedObject);
                 return;
             }
             _instance.GetLoggerInternal<T>().Log(level, message, associatedObject);
         }
         
-        private static void BackupLog(LogLevels level, string message)
+        private static void BackupLog(Type loggerType, LogLevels level, string message, UnityEngine.Object associatedObject = null)
         {
             if (!_loggedWithoutInitialization)
             {
@@ -390,6 +399,13 @@ namespace Rhinox.Perceptor
                     $"[WARNING] {nameof(PLog)} hasn't been initialized yet, some of the following lines might not be included in the appropriate logs.");
                 _loggedWithoutInitialization = true;
             }
+
+            if (_cacheLogger == null)
+                _cacheLogger = new LogPrecache();
+
+            if (!_cacheLogger.CacheEntry(loggerType, level, message, associatedObject))
+                UnityEngine.Debug.LogWarning(
+                    $"[WARNING] {nameof(PLog)} hasn't been initialized yet, caching entries has been enabled. However, the cache for logger of type '{loggerType?.Name}' has overflowed.");
             
             switch (level)
             {
