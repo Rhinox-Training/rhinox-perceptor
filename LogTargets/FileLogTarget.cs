@@ -64,9 +64,9 @@ namespace Rhinox.Perceptor
                 return Path.GetFullPath(Path.Combine(Application.dataPath, "../", filePath));
 #else
                 if (Application.platform == RuntimePlatform.OSXPlayer)
-                    return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, "/../../../", filePath));
+                    return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, "../../..", filePath));
                 else if (Application.platform == RuntimePlatform.WindowsPlayer)
-                    return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, "/../../", filePath));
+                    return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, "../..", filePath));
                 else if (Application.platform == RuntimePlatform.Android)
                     return Path.GetFullPath(Path.Combine(GetPersistentDataPath(), filePath));
                 return Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, filePath));
