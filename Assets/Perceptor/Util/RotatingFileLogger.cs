@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -11,7 +12,9 @@ namespace Rhinox.Perceptor
         public int MaxFileSize { get; }
         
         public const int DEFAULT_MAX_FILE_SIZE = 10 * 1024 * 1024;
-    
+
+        private static Dictionary<string, object> _locks = new Dictionary<string,object>();
+
         public RotatingFileLogger(string filePath, int maxFileSize = DEFAULT_MAX_FILE_SIZE)
         {
             string fileName = Path.GetFileNameWithoutExtension(filePath);
@@ -21,16 +24,23 @@ namespace Rhinox.Perceptor
             FilePath = absPath;
             BackFilePath = Path.GetFullPath(Path.Combine(containingFolder, $"{fileName}-prev.{extension}"));
             MaxFileSize = maxFileSize;
+            if (_locks == null)
+                _locks = new Dictionary<string, object>();
+            if (!_locks.ContainsKey(FilePath))
+                _locks.Add(FilePath, new object());
         }
 
         public void WriteLine(string line)
         {
-            FileInfo fi = new FileInfo(FilePath);
-            int utfLength = Encoding.UTF8.GetByteCount(line);
-            if (fi.Exists && fi.Length + utfLength > DEFAULT_MAX_FILE_SIZE)
-                SwapFile();
-            TryCreateDirectories(FilePath);
-            File.AppendAllText(FilePath, line + "\n");
+            lock(_locks[FilePath])
+            {
+                FileInfo fi = new FileInfo(FilePath);
+                int utfLength = Encoding.UTF8.GetByteCount(line);
+                if (fi.Exists && fi.Length + utfLength > DEFAULT_MAX_FILE_SIZE)
+                    SwapFile();
+                TryCreateDirectories(FilePath);
+                File.AppendAllText(FilePath, line + "\n");
+            }
         }
 
         private void SwapFile()
