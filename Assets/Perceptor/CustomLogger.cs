@@ -9,6 +9,7 @@ namespace Rhinox.Perceptor
         public LogLevels LogLevel = LogLevels.Debug;
         public bool ShouldThrowErrors = false;
         private readonly List<ILogTarget> _logTargets;
+        private LoggerSettings _currentSettings;
 
         public delegate void LogHandler(LogLevels level, string message, UnityEngine.Object associatedObject = null);
         public event LogHandler Logged; 
@@ -43,7 +44,11 @@ namespace Rhinox.Perceptor
         internal void AppendTarget(ILogTarget target)
         {
             if (target != null && !_logTargets.Contains(target))
+            {
+                if (_currentSettings != null)
+                    target.ApplySettings(_currentSettings);
                 _logTargets.Add(target);
+            }
         }
 
         public void Log(LogLevels level, string message, UnityEngine.Object associatedObject = null)
@@ -73,6 +78,7 @@ namespace Rhinox.Perceptor
             if (settings == null || !settings.CanApplyTo(this))
                 return;
             
+            _currentSettings = settings;
             if (_logTargets == null)
                 return;
 

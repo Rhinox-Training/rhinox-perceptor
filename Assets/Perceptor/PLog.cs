@@ -37,6 +37,9 @@ namespace Rhinox.Perceptor
             // Load loggers
             _instance.LoadLoggerInstances();
             
+            // Load LogTargetCache
+            _instance.TryLoadLogTargetCache();
+            
             // Load logger settings
             LoggerDefaults ld = LoggerDefaults.Instance;
             foreach (var loggerType in _instance._loggerCache.Keys)
@@ -49,9 +52,6 @@ namespace Rhinox.Perceptor
                 }
             }
 
-            // Load LogTargetCache
-            _instance.TryLoadLogTargetCache();
-            
             _instance.Loaded = true;
 
             if (_cacheLogger != null)
