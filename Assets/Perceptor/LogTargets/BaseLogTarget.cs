@@ -4,9 +4,9 @@ namespace Rhinox.Perceptor
 {
     public abstract class BaseLogTarget : ILogTarget
     {
-        public bool Muted { get; private set; }
-        public LogLevels LogLevel { get; private set; } = LogLevels.Debug;
-        public bool ShouldThrowErrors { get; private set; } = false;
+        public bool Muted { get; protected set; }
+        public LogLevels LogLevel { get; protected set; } = LogLevels.Debug;
+        public bool ShouldThrowErrors { get; protected set; } = false;
 
         public void Log(LogLevels level, string message, Object associatedObject = null)
         {
