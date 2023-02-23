@@ -61,7 +61,7 @@ namespace Rhinox.Perceptor
                 if (target == null)
                     continue;
                 
-                target.Log(level, message, associatedObject);
+                target.Log(level, message, associatedObject, this);
             }
             
             TriggerLogged(level, message, associatedObject);

@@ -8,7 +8,9 @@ namespace Rhinox.Perceptor
         public LogLevels LogLevel { get; protected set; } = LogLevels.Debug;
         public bool ShouldThrowErrors { get; protected set; } = false;
 
-        public void Log(LogLevels level, string message, Object associatedObject = null)
+        protected ILogger ActiveLogger { get; private set; }
+        
+        public void Log(LogLevels level, string message, Object associatedObject = null, ILogger sender = null)
         {
 #if NO_LOGGING
             return;
@@ -19,7 +21,11 @@ namespace Rhinox.Perceptor
             if (LogLevel > level || LogLevel == LogLevels.None)
                 return;
 
+            ActiveLogger = sender;
+
             OnLog(level, message, associatedObject);
+
+            ActiveLogger = null;
         }
 
         protected abstract void OnLog(LogLevels level, string message, Object associatedObject = null);
