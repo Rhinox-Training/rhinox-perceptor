@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 namespace Rhinox.Perceptor
 {
     public abstract class BaseLogTarget : ILogTarget
@@ -8,8 +9,21 @@ namespace Rhinox.Perceptor
         public LogLevels LogLevel { get; protected set; } = LogLevels.Debug;
         public bool ShouldThrowErrors { get; protected set; } = false;
 
+        protected static ILogMessageBuilder DefaultBuilder = new RawMessageBuilder();
+
+        protected ILogMessageBuilder _customBuilder;
+
         protected ILogger ActiveLogger { get; private set; }
-        
+
+        public void SetCustomMessageBuilder(ILogMessageBuilder customBuilder)
+        {
+            if (customBuilder == null)
+                return;
+
+            _customBuilder = customBuilder;
+        }
+
+
         public void Log(LogLevels level, string message, Object associatedObject = null, ILogger sender = null)
         {
 #if NO_LOGGING
@@ -17,13 +31,16 @@ namespace Rhinox.Perceptor
 #endif
             if (Muted)
                 return;
-            
+
             if (LogLevel > level || LogLevel == LogLevels.None)
                 return;
 
             ActiveLogger = sender;
 
-            OnLog(level, message, associatedObject);
+            var messageBuilder = _customBuilder ?? DefaultBuilder;
+            string builtMessage = messageBuilder.BuildMessage(level, message, associatedObject);
+
+            OnLog(level, builtMessage, associatedObject);
 
             ActiveLogger = null;
         }
@@ -39,7 +56,6 @@ namespace Rhinox.Perceptor
 
         public virtual void Update()
         {
-            
         }
     }
 }

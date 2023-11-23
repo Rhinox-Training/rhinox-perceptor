@@ -19,6 +19,7 @@ namespace Rhinox.Perceptor
         {
             FilePath = rootedFilePath;
             SetupFile();
+            _customBuilder = new LogLevelBuilder().Append(DefaultBuilder,">");
         }
 
         public static FileLogTarget CreateByPath(string customFilePath)
@@ -112,40 +113,10 @@ namespace Rhinox.Perceptor
         {
             if (_rotatingFileLogger == null)
                 return;
-
-            string logLine = "";
             
-            string shortLevel = ToShortString(level);
-            if (shortLevel != null)
-                logLine += $"{shortLevel}> ";
-            logLine += message;
-            
-            _rotatingFileLogger.WriteLine(logLine);
+            _rotatingFileLogger.WriteLine(message);
         }
-
-        private string ToShortString(LogLevels level)
-        {
-            switch (level)
-            {
-                case LogLevels.Trace:
-                    return "TRAC";
-                case LogLevels.Debug:
-                    return "DEBG";
-                case LogLevels.Info:
-                    return "INFO";
-                case LogLevels.Warn:
-                    return "WARN";
-                case LogLevels.Error:
-                    return "ERRO";
-                case LogLevels.Fatal:
-                    return "FATL";
-                case LogLevels.None:
-                    return null;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(level), level, null);
-            }
-        }
-
+        
         private void SetupFile()
         {
             if (_rotatingFileLogger != null)
