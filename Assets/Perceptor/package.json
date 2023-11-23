@@ -1,7 +1,7 @@
 {
   "name": "com.rhinox.open.perceptor",
   "displayName": "Perceptor - Logging Framework",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "unity": "2019.1",
   "repository": {
     "type": "git",
