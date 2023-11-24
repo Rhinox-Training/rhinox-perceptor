@@ -16,6 +16,8 @@ namespace Rhinox.Perceptor
 
         private Dictionary<Type, ILogger> _loggerCache;
         private ILogger _defaultLogger;
+        public static readonly ILogMessageBuilder DefaultBuilder = new RawMessageBuilder();
+        
         public bool Loaded { get; private set; }
         
         private static bool _loggedWithoutInitialization;

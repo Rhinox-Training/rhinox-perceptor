@@ -8,9 +8,7 @@ namespace Rhinox.Perceptor
         public bool Muted { get; protected set; }
         public LogLevels LogLevel { get; protected set; } = LogLevels.Debug;
         public bool ShouldThrowErrors { get; protected set; } = false;
-
-        protected static ILogMessageBuilder DefaultBuilder = new RawMessageBuilder();
-
+        
         protected ILogMessageBuilder _customBuilder;
 
         protected ILogger ActiveLogger { get; private set; }
@@ -37,7 +35,7 @@ namespace Rhinox.Perceptor
 
             ActiveLogger = sender;
 
-            var messageBuilder = _customBuilder ?? DefaultBuilder;
+            var messageBuilder = _customBuilder ?? PLog.DefaultBuilder;
             string builtMessage = messageBuilder.BuildMessage(level, message, associatedObject);
 
             OnLog(level, builtMessage, associatedObject);

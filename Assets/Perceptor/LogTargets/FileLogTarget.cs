@@ -19,7 +19,7 @@ namespace Rhinox.Perceptor
         {
             FilePath = rootedFilePath;
             SetupFile();
-            _customBuilder = new LogLevelBuilder().Append(DefaultBuilder,">");
+            _customBuilder = new LogLevelBuilder().Append(PLog.DefaultBuilder,">");
         }
 
         public static FileLogTarget CreateByPath(string customFilePath)
