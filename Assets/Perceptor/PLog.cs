@@ -6,6 +6,7 @@ using UnityEditor;
 #endif
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Object = UnityEngine.Object;
 
 namespace Rhinox.Perceptor
@@ -238,11 +239,13 @@ namespace Rhinox.Perceptor
         // =============================================================================================================
         // API
 
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         public static void Trace(string message, GameObject associatedObject = null)
         {
             Log(LogLevels.Trace, message, associatedObject: associatedObject);
         }
         
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         public static void Trace<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
@@ -253,6 +256,7 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Trace, message, associatedObject);
         }
 
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         public static void TraceDetailed(string message, [CallerMemberName] string caller = "",
             [CallerFilePath] string callerPath = "", UnityEngine.Object associatedObject = null)
         {
@@ -265,6 +269,7 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Trace, message, associatedObject: associatedObject);
         }
         
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         public static void TraceDetailed<T>(string message, UnityEngine.Object associatedObject = null, [CallerMemberName] string caller = "",
             [CallerFilePath] string callerPath = "") where T : ILogger
         {
@@ -277,19 +282,26 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Trace, message, associatedObject: associatedObject);
         }
 
+        private static Dictionary<string, string> _fileNameByPath = new Dictionary<string, string>();
         private static string GetCallerMessage(string message, string caller, string callerPath)
         {
-            var file = Path.GetFileNameWithoutExtension(callerPath);
+            if (!_fileNameByPath.TryGetValue(callerPath, out var file))
+                _fileNameByPath[callerPath] = Path.GetFileNameWithoutExtension(callerPath);
+            
             if (string.IsNullOrWhiteSpace(message))
                 message = "NULL";
             return $"[{file}::{caller}] {message}";
         }
 
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         public static void Debug(string message, UnityEngine.Object associatedObject = null)
         {
             Log(LogLevels.Debug, message, associatedObject: associatedObject);
         }
         
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         public static void Debug<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
@@ -300,11 +312,17 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Debug, message, associatedObject);
         }
 
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
         public static void Info(string message, UnityEngine.Object associatedObject = null)
         {
             Log(LogLevels.Info, message, associatedObject: associatedObject);
         }
         
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
         public static void Info<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
@@ -315,11 +333,19 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Info, message, associatedObject);
         }
 
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "WARN")]
         public static void Warn(string message, UnityEngine.Object associatedObject = null)
         {
             Log(LogLevels.Warn, message, associatedObject: associatedObject);
         }
         
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "WARN")]
         public static void Warn<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             
@@ -331,11 +357,21 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Warn, message, associatedObject);
         }
 
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "WARN")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "ERROR")]
         public static void Error(string message, UnityEngine.Object associatedObject = null)
         {
             Log(LogLevels.Error, message, associatedObject: associatedObject);
         }
         
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "WARN")]
+        [Conditional(LoggerDefaults.DefineSymbolPrefix + "ERROR")]
         public static void Error<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)

@@ -8,17 +8,11 @@ namespace Perceptor.Editor
     [CustomEditor(typeof(LoggerDefaults))]
     public class LoggerDefaultsEditor : UnityEditor.Editor
     {
-        
-        private const string _helpText = "Cannot find 'Physical Simulation List' component on any GameObject in the scene!";
-        
-        private static Vector2 _windowsMinSize = Vector2.one * 500f;
-        private static Rect _helpRect = new Rect(0f, 0f, 400f, 100f);
-        private static Rect _listRect = new Rect(Vector2.zero, _windowsMinSize);
- 
         private bool _isActive;
         
         private SerializedObject _objectSO = null;
         private ReorderableList _listRE = null;
+        private GUIStyle _style;
         
         private void OnEnable()
         {
@@ -35,20 +29,6 @@ namespace Perceptor.Editor
                 _listRE.drawElementCallback = DrawSettingData;
                 _listRE.elementHeightCallback = CalculateElementHeight;
                 _listRE.drawElementBackgroundCallback += DrawElementBackground;
-                // _listRE.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
-                // {
-                //     var element = _listRE.serializedProperty.GetArrayElementAtIndex(index);
-                //     var typeName = element.FindPropertyRelative(nameof(LoggerSettings.TypeName));
-                //     
-                //     rect.x += 15f;
-                //     rect.y += 2f;
-                //     //rect.height = 5.0f * EditorGUIUtility.singleLineHeight;
-                //     GUIContent objectLabel = new GUIContent(typeName != null ? typeName.stringValue : $"Setting {index}");
-                //     //the index will help numerate the serialized fields
-                //
-                //     //EditorGUILayout.PropertyField(element, objectLabel);
-                //     EditorGUI.PropertyField(rect, element, objectLabel);
-                // };
             }
         }
 
@@ -140,20 +120,21 @@ namespace Perceptor.Editor
         
         public override void OnInspectorGUI()
         {
-            if (_objectSO == null)
-            {
-                EditorGUI.HelpBox(_helpRect, _helpText, MessageType.Warning);
-                return;
-            }
-            else if (_objectSO != null)
-            {
-                _objectSO.Update();
-                _listRE.DoLayoutList();
-                _objectSO.ApplyModifiedProperties();
-            }
-            
+            _objectSO.Update();
+            _listRE.DoLayoutList();
+            _objectSO.ApplyModifiedProperties();
 
-            GUILayout.Space(10f);
+            if (_style == null)
+            {
+                _style = new GUIStyle(GUI.skin.box)
+                {
+                    fontSize = 14
+                };
+            }
+
+            GUILayout.Space(5f);
+            GUILayout.Label($"The compiled log level is: {(target as LoggerDefaults).ActiveSymbol}", _style, GUILayout.ExpandWidth(true));
+            GUILayout.Space(5f);
 
             if (GUILayout.Button("Populate LoggerTypes"))
             {

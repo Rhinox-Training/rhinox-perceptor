@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Rhinox.Perceptor
 {
@@ -124,5 +126,26 @@ namespace Rhinox.Perceptor
             return setting?.Clone();
         }
 
+#if UNITY_EDITOR
+        public const string DefineSymbolPrefix = "RHINOX_PERCEPTOR_";
+
+        public LogLevels ActiveSymbol;
+
+        private void OnValidate()
+        {
+            ActiveSymbol = Settings.Min(x => x.Level);
+            
+            var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+            
+            var definedSymbols = defines.Split(';');
+            definedSymbols = definedSymbols.Where(x => !x.StartsWith(DefineSymbolPrefix))
+                .Append(DefineSymbolPrefix + ActiveSymbol.ToString().ToUpper())
+                .ToArray();
+            defines = string.Join(";", definedSymbols);
+
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, defines);
+        }
+#endif
     }
 }
