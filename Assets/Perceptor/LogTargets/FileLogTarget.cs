@@ -109,6 +109,9 @@ namespace Rhinox.Perceptor
             return path;
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         protected override void OnLog(LogLevels level, string message, Object associatedObject = null)
         {
             if (_rotatingFileLogger == null)

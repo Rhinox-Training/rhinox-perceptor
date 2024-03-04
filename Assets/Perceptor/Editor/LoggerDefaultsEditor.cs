@@ -124,16 +124,20 @@ namespace Perceptor.Editor
             _listRE.DoLayoutList();
             _objectSO.ApplyModifiedProperties();
 
-            if (_style == null)
+            // if (_style == null)
             {
-                _style = new GUIStyle(GUI.skin.box)
+                _style = new GUIStyle(GUI.skin.label)
                 {
-                    fontSize = 14
+                    fontSize = 14,
+                    alignment = TextAnchor.MiddleCenter,
+                    fontStyle = FontStyle.Bold
                 };
             }
 
             GUILayout.Space(5f);
+            GUILayout.BeginHorizontal(GUI.skin.box);
             GUILayout.Label($"The compiled log level is: {(target as LoggerDefaults).ActiveSymbol}", _style, GUILayout.ExpandWidth(true));
+            GUILayout.EndHorizontal();
             GUILayout.Space(5f);
 
             if (GUILayout.Button("Populate LoggerTypes"))

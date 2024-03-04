@@ -245,6 +245,9 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Trace, message, associatedObject: associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         public static void Trace<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
@@ -256,6 +259,9 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Trace, message, associatedObject);
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         public static void TraceDetailed(string message, [CallerMemberName] string caller = "",
             [CallerFilePath] string callerPath = "", UnityEngine.Object associatedObject = null)
@@ -269,6 +275,9 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Trace, message, associatedObject: associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         public static void TraceDetailed<T>(string message, UnityEngine.Object associatedObject = null, [CallerMemberName] string caller = "",
             [CallerFilePath] string callerPath = "") where T : ILogger
@@ -293,6 +302,9 @@ namespace Rhinox.Perceptor
             return $"[{file}::{caller}] {message}";
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         public static void Debug(string message, UnityEngine.Object associatedObject = null)
@@ -300,6 +312,9 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Debug, message, associatedObject: associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         public static void Debug<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
@@ -312,6 +327,9 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Debug, message, associatedObject);
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
@@ -320,6 +338,9 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Info, message, associatedObject: associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
@@ -333,6 +354,9 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Info, message, associatedObject);
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
@@ -342,6 +366,9 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Warn, message, associatedObject: associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
@@ -357,6 +384,9 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Warn, message, associatedObject);
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
@@ -367,6 +397,9 @@ namespace Rhinox.Perceptor
             Log(LogLevels.Error, message, associatedObject: associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "TRACE")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "DEBUG")]
         [Conditional(LoggerDefaults.DefineSymbolPrefix + "INFO")]
@@ -382,11 +415,17 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Error, message, associatedObject);
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public static void Fatal(string message, UnityEngine.Object associatedObject = null)
         {
             Log(LogLevels.Fatal, message, associatedObject: associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public static void Fatal<T>(string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
@@ -397,11 +436,17 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Fatal, message, associatedObject);
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public static void Fatal(Exception exception, UnityEngine.Object associatedObject = null)
         {
             Log(LogLevels.Fatal, exception.Message, associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public static void Fatal<T>(Exception exception, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
@@ -412,6 +457,9 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(LogLevels.Fatal, exception.Message, associatedObject);
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public static void Log(LogLevels level, string message, UnityEngine.Object associatedObject = null)
         {
             if (_instance == null)
@@ -422,6 +470,9 @@ namespace Rhinox.Perceptor
             _instance._defaultLogger.Log(level, message, associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public static void Log<T>(LogLevels level, string message, UnityEngine.Object associatedObject = null) where T : ILogger
         {
             if (_instance == null)
@@ -432,6 +483,9 @@ namespace Rhinox.Perceptor
             _instance.GetLoggerInternal<T>().Log(level, message, associatedObject);
         }
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         private static void BackupLog(Type loggerType, LogLevels level, string message, UnityEngine.Object associatedObject = null)
         {
             if (!_loggedWithoutInitialization)

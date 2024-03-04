@@ -16,10 +16,16 @@ MonoBehaviour:
   - TypeName: DefaultLogger
     FullTypeName: Rhinox.Perceptor.PLog+DefaultLogger
     Muted: 0
-    Level: 2
+    Level: 3
     ThrowExceptionOnFatal: 0
   - TypeName: MyLogger
     FullTypeName: MyLogger
     Muted: 0
-    Level: 2
+    Level: 3
     ThrowExceptionOnFatal: 0
+  - TypeName: PerceptorLogger
+    FullTypeName: PerceptorLogger
+    Muted: 0
+    Level: 3
+    ThrowExceptionOnFatal: 0
+  ActiveSymbol: 3

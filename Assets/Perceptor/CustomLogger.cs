@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Rhinox.Perceptor
@@ -51,6 +52,9 @@ namespace Rhinox.Perceptor
             }
         }
 
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public void Log(LogLevels level, string message, UnityEngine.Object associatedObject = null)
         {
             if (_logTargets == null)

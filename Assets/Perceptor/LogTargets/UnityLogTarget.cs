@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Rhinox.Perceptor
 {
@@ -6,6 +7,9 @@ namespace Rhinox.Perceptor
     {
         internal static bool Silence = false;
         
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         protected override void OnLog(LogLevels level, string message, UnityEngine.Object associatedObject = null)
         {
             if (Silence)

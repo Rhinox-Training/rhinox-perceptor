@@ -21,7 +21,9 @@ namespace Rhinox.Perceptor
             _customBuilder = customBuilder;
         }
 
-
+#if UNITY_2021_3_OR_NEWER
+        [HideInCallstack]
+#endif
         public void Log(LogLevels level, string message, Object associatedObject = null, ILogger sender = null)
         {
 #if NO_LOGGING
