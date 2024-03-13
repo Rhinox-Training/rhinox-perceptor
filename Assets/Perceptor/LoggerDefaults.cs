@@ -126,9 +126,9 @@ namespace Rhinox.Perceptor
             return setting?.Clone();
         }
 
-#if UNITY_EDITOR
         public const string DefineSymbolPrefix = "RHINOX_PERCEPTOR_";
 
+#if UNITY_EDITOR
         public LogLevels ActiveSymbol;
 
         private void OnValidate()
