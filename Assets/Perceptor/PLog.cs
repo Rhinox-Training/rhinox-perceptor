@@ -177,6 +177,7 @@ namespace Rhinox.Perceptor
         }
 
         private static Dictionary<Type, List<ILogTarget>> _targetInitializationCache;
+        public static Dictionary<Type, List<ILogTarget>> LoggerTargetDict => _targetInitializationCache;
         private static LogPrecache _cacheLogger;
 
         public static void AppendLogTarget<T>(ILogTarget target) where T : CustomLogger
